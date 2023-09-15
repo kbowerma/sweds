@@ -1,5 +1,5 @@
 /*
- * Project zbar5
+ * Project sweds
  * Description:
  * Author: Kyle Bowerman
  * Date: 8/30/23
@@ -49,7 +49,8 @@ void setup()
     }
     else
     {
-        Particle.publish("Config_initialized", String(readConfig.initialized));
+      Particle.publish("Config_initialized", String(readConfig.initialized));
+      setConfig("init");
     }
 
     setUpParticleVariables();

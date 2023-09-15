@@ -1,5 +1,5 @@
-#define FILENAME "sweds.cpp"
-#define MYVERSION "4.13"
+#define FILENAME "sweds.ino"
+#define MYVERSION "4.14"
 #define BUILD_DATE "9/14/23"
 #define CONFIGADDR 10
 #define MODEADDR 20

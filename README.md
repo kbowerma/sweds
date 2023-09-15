@@ -48,12 +48,51 @@ reset | - | reboots
 Stored operational mode like wether to restore the lights after the motion timer. 
 Currently it doesnt do anything 
 enum|mode|desc
-----|----|
+----|----|---
 0|none
 1|store
 2|suspend
 3|foo
 4|default
+
+
+# Power Consuption
+
+led | condition | Amps | per led | per led only | amps per white power
+----|-----------|------| ------ | ------------ |-----
+none|none       | .05
+strip 1 (18)|  white 50 | 0.107 | w50 = .006   | .0032 | .000064
+strip 1 (18)|  white 100 | 0.165 | w100 = .009 | .0064 | .000064
+strip 1 (18)|  white 255 | 0.34  | w255 = .019 | .0016 | .0000062
+ strip 1 (18)|  all 100   | 0.300
+strip 1 (18)|  all 255   | 0.75
+strip 1 (18)|  rgb 100  | 0.22
+strip 2 (81)|  white 50  | 0.33 | w50 = .004  | .0034  | .0000068
+strip 2 (81)|  white 100 | 0.56 | w100 = .007 | .0063  | .000063
+strip 2 (81)|  white 255 | 1.35 | w255 = .016 | .0160  | .000062
+strip 2 (81)|  all 100   | 1.31
+strip 2 (81)|  all 255   | 3.05
+strip 2 (81)|  rgb 255   | 1.95
+strip 2 (81)|  rgb 100   | 0.80
+stp 1&2 (99)|  all 100   | 1.59
+stp 1&2 (99)|  all 255   | 3.58
+stp 1&2 (99)|  white 50  | 0.36 | w50 = .004  | .0031  | .000031
+stp 1&2 (99)|  white 100 | 0.68 | w100 = .006 | .0063  | .000032
+stp 1&2 (99)|  white 255 | 1.63 | w255 = .016 | .0159  | .00062
+
+## Cat 5 power cable
++ 4x w/orange, orange, white green, wh/blu
+signal blue
+- green, white brown brown
+ not used white blue 
+
+## Methods
+### Publish 
+ office 1:white:50 #turn north wall on 
+
+### Functions
+__ledConfig:__ ```1:red:100``` _turns on light 1 red at 100_
+__setConfig__
 
 
 # Particle Boiler plate
@@ -98,41 +137,3 @@ When you're ready to compile your project, make sure you have the correct Partic
 ```brew install clang-format```
 ### Run clang-format
 ```clang-format -i sweds.ino```
-
-# Power Consuption
-
-led | condition | Amps | per led | per led only | amps per white power
-----|-----------|------| ------ | ------------ |-----
-none|none       | .05
-strip 1 (18)|  white 50 | 0.107 | w50 = .006   | .0032 | .000064
-strip 1 (18)|  white 100 | 0.165 | w100 = .009 | .0064 | .000064
-strip 1 (18)|  white 255 | 0.34  | w255 = .019 | .0016 | .0000062
- strip 1 (18)|  all 100   | 0.300
-strip 1 (18)|  all 255   | 0.75
-strip 1 (18)|  rgb 100  | 0.22
-strip 2 (81)|  white 50  | 0.33 | w50 = .004  | .0034  | .0000068
-strip 2 (81)|  white 100 | 0.56 | w100 = .007 | .0063  | .000063
-strip 2 (81)|  white 255 | 1.35 | w255 = .016 | .0160  | .000062
-strip 2 (81)|  all 100   | 1.31
-strip 2 (81)|  all 255   | 3.05
-strip 2 (81)|  rgb 255   | 1.95
-strip 2 (81)|  rgb 100   | 0.80
-stp 1&2 (99)|  all 100   | 1.59
-stp 1&2 (99)|  all 255   | 3.58
-stp 1&2 (99)|  white 50  | 0.36 | w50 = .004  | .0031  | .000031
-stp 1&2 (99)|  white 100 | 0.68 | w100 = .006 | .0063  | .000032
-stp 1&2 (99)|  white 255 | 1.63 | w255 = .016 | .0159  | .00062
-
-## Cat 5 power cable
-+ 4x w/orange, orange, white green, wh/blu
-signal blue
-- green, white brown brown
- not used white blue 
-
-## Methods
-### Publish 
- office 1:white:50 #turn north wall on 
-
-### Functions
-__ledConfig:__ ```1:red:100``` _turns on light 1 red at 100_
-___setConfig__
