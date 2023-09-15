@@ -39,7 +39,7 @@ read| -     | publish: mode, motionEnabled, awayHoldTMR,gestureArmed | ```mode``
 led | - | publish led values | ```LED1```  ```1:0:0:0:50```
 eeprom | WIP stores  strip/rgb in eeprom and publish
 init | sets EEPROM {1, false,false, 0, 600 }  ( initialized,motionEnabled,gestureArmed,mode,awayHoldTMR)
-motionEnabled | read readConfig.motionEnabled and writes to EEPROM | enable: ``` particle call swed1 setConfig motionEnabled:1```
+motionEnabled | read readConfig.motionEnabled and writes to EEPROM | enable: ``` particle call swed1 setConfig motionEnabled/1```
 awayHoldTMR | read readConfig.awayHoldTMR and writes to EEPROM 
 mode | | read  config.mode and writes to EEPROM 
 reset | - | reboots
