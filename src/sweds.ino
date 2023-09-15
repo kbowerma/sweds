@@ -20,7 +20,7 @@ int strip3pin = D4;
 int PIR = A0;
 int numpixel = 18;
 int motionState;
-int lastMotionTime, secSinceMotion = 0;
+int lastMotionTime, secSinceMotion = -1;
 String modeName = "unset";
 
 // Objects
@@ -76,7 +76,9 @@ void setup()
 void loop()
 {
 
-    // read PIR Sensor
+  // Motion Loop logic
+  if (readConfig.motionEnabled == true )
+  {
     motionState = digitalRead(PIR);
 
     // Got motion
@@ -87,6 +89,7 @@ void loop()
 
     // last item in loop
     secSinceMotion = (millis() - lastMotionTime) / 1000;
+}
 }
 
 // ---------- Functions ---------
@@ -275,9 +278,10 @@ void ledhandler(const char *event, const char *data)
 
 void motionHandler()
 {
-    digitalWrite(led2, HIGH);
-    delay(500);
-    digitalWrite(led2, HIGH);
+  // toggle blue led
+    digitalWrite(led2, !digitalRead(led2)); 
+    // delay(500);
+    // digitalWrite(led2, HIGH);
     lastMotionTime = millis();
     return;
 }
