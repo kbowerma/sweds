@@ -94,6 +94,10 @@ When you're ready to compile your project, make sure you have the correct Partic
 ```particle compile argon```
 ### Flash
 ```particle flash swed1```
+### Install clan-format
+```brew install clang-format```
+### Run clang-format
+```clang-format -i sweds.ino```
 
 # Power Consuption
 
