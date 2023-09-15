@@ -1,6 +1,62 @@
 # sweds
 
-A Particle project named zbar5
+A Particle project named sweds for swed1 and swed2 from zbar5
+
+# Features
+
+## LEDS
+3 strips
+
+## PIR
+![image](https://github.com/kbowerma/zbar5/assets/1180747/6a69e569-25d4-45b1-9b05-55e2ed71f48f)
+
+
+https://www.amazon.com/gp/product/B00FDPO9B8/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1
+
+## Adafruit 1/2 Board Pinout
+
+![](https://docs.particle.io/assets/images/photon-2-pinout.svg)
+
+Pin | Board | Function | x
+----|-------|----------|-- 
+VUSB|   J7  | VIN      | (+) rail (7 right)
+GND |   E4  | gnd      | (-) rail (1 right)  
+D2  |   J14 | D2       | header
+D3  |   J13 | D3       | header  
+D4  |   J12 | D4       | header
+
+## Methods
+### Publish 
+ office 1:white:50 #turn north wall on 
+
+### Functions
+#### ledConfig:
+ ```1:red:100``` _turns on light 1 red at 100_
+#### setConfig:
+key | parms | actions | example
+----|-------|-------- | --------
+read| -     | publish: mode, motionEnabled, awayHoldTMR,gestureArmed | ```mode```  ```1``
+led | - | publish led values | ```LED1```  ```1:0:0:0:50```
+eeprom | WIP stores  strip/rgb in eeprom and publish
+init | sets EEPROM {1, false,false, 0, 600 }  ( initialized,motionEnabled,gestureArmed,mode,awayHoldTMR)
+motionEnabled | read readConfig.motionEnabled and writes to EEPROM 
+awayHoldTMR | read readConfig.awayHoldTMR and writes to EEPROM 
+mode | | read  config.mode and writes to EEPROM 
+reset | - | reboots
+
+### Modes
+Stored operational mode like wether to restore the lights after the motion timer. 
+Currently it doesnt do anything 
+enum|mode|desc
+----|----|
+0|none
+1|store
+2|suspend
+3|foo
+4|default
+
+
+# Particle Boiler plate
 
 ## Welcome to your project!
 
@@ -34,17 +90,10 @@ When you're ready to compile your project, make sure you have the correct Partic
 - The `project.properties` file for your project
 - Any libraries stored under `lib/<libraryname>/src`
 
-## Adafruit 1/2 Board Pinout
-
-![](https://docs.particle.io/assets/images/photon-2-pinout.svg)
-
-Pin | Board | Function | x
-----|-------|----------|-- 
-VUSB|   J7  | VIN      | (+) rail (7 right)
-GND |   E4  | gnd      | (-) rail (1 right)  
-D2  |   J14 | D2       | header
-D3  |   J13 | D3       | header  
-D4  |   J12 | D4       | header
+### Compile
+```particle compile argon```
+### Flash
+```particle flash swed1```
 
 # Power Consuption
 

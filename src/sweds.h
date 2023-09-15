@@ -1,6 +1,6 @@
 #define FILENAME "sweds.cpp"
 #define MYVERSION "4.13"
-#define BUILD_DATE "9/1/23"
+#define BUILD_DATE "9/14/23"
 #define CONFIGADDR 10
 #define MODEADDR 20
 #define LEDBASEADDR 30
