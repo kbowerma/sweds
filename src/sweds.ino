@@ -129,6 +129,8 @@ void setUpParticleFunctions()
 {
     Particle.function("ledConfig", ledConfig);
     Particle.function("setConfig", setConfig);
+    Particle.function("suspend",suspend);
+    Particle.function("restore",restore);
 }
 
 void setUpParticlePubSub()
@@ -150,9 +152,11 @@ int ledConfig(String command)
     String mycolor = command.substring(delim1 + 1, delim2);
     String mybrightness = command.substring(delim2 + 1);
     int stripId = mystrip.toInt();
-    Particle.publish("mystrip", String(mystrip));
-    Particle.publish("mycolor", String(mycolor));
-    Particle.publish("mybrightness", String(mybrightness));
+    String myMsg = deviceName+"/ledConfig";
+    // Particle.publish("mystrip", String(mystrip));
+    // Particle.publish("mycolor", String(mycolor));
+    // Particle.publish("mybrightness", String(mybrightness));
+    Particle.publish(myMsg,command);
 
     if (mycolor == "red")
     {
@@ -197,38 +201,36 @@ void storeLedValues(int stripId, int ured, int ugreen, int ublue, int uwhite)
 {
 
     // EEPROM.get(CONFIGADDR,readConfig);
-    if (modeName == "store")
-    {
         EEPROM.put(LEDBASEADDR + stripId, LEDS[stripId - 1]);
+        String myLEDString = String(stripId) + ":" + String(ured);
+        Particle.publish(deviceName+"/store",myLEDString);
+
+    switch (stripId)
+    { case 1:
+        myLED1 = {1, ured, ugreen, ublue, uwhite};
+        break;
+      case 2:
+        myLED2 = {2, ured, ugreen, ublue, uwhite};
+        break;
+      case 3:
+        myLED3 = {3, ured, ugreen, ublue, uwhite};
+        break;
     }
-    // The three normal strips
-    if (stripId < 4)
-    {
-        LEDS[stripId - 1].stripid = stripId;
-        LEDS[stripId - 1].red = ured;
-        LEDS[stripId - 1].green = ugreen;
-        LEDS[stripId - 1].blue = ublue;
-        LEDS[stripId - 1].white = uwhite;
-    }
-    if (stripId == 4)
-    {
-        LEDS[stripId - 2].stripid = stripId;
-        LEDS[stripId - 2].red = ured;
-        LEDS[stripId - 2].green = ugreen;
-        LEDS[stripId - 2].blue = ublue;
-        LEDS[stripId - 2].white = uwhite;
-    }
+
 }
 
 void juiceLeds(int stripId, int ured, int ugreen, int ublue, int uwhite)
 {
 
     // Store the struct values
-    storeLedValues(stripId, ured, ugreen, ublue, uwhite);
+    if (modeName == "store")
+    {
+        storeLedValues(stripId, ured, ugreen, ublue, uwhite);
+    }
 
     if (stripId == 1)
     {
-        Particle.publish("juiceleds", String(stripId));
+        //Particle.publish("juiceleds", String(stripId));
 
         int pix = 18;
         for (int n = 0; n < pix; n++)
@@ -295,9 +297,7 @@ void ledhandler(const char *event, const char *data)
 
 void motionHandler()
 {
-  // toggle blue led
-    //digitalWrite(led2, !digitalRead(led2)); 
-    // delay(500);
+  // toggle blue led D7
     digitalWrite(led2, HIGH);
     lastMotionTime = millis();
     return;
@@ -314,7 +314,8 @@ int setConfig(String command)
 
     if (key == "read")
     {
-        Particle.publish("mode", String(readConfig.mode));
+        //Particle.publish("mode", String(readConfig.mode));
+        getModeName();
         Particle.publish("motionEnabled", String(readConfig.motionEnabled));
         Particle.publish("awayHoldTMR", String(readConfig.awayHoldTMR));
         Particle.publish("gestureArmed", String(readConfig.gestureArmed));
@@ -384,6 +385,42 @@ int setConfig(String command)
 
     // Do a final get config
     EEPROM.get(CONFIGADDR, readConfig);
+    return 1;
+}
+
+int suspend(String command){
+    // 1 read config
+    EEPROM.get(CONFIGADDR, readConfig);
+    // 2 Change mode to suspend
+    readConfig.mode = 2;
+    EEPROM.put(CONFIGADDR, readConfig);
+    // 3 turn off the lights
+    //Particle.publish(deviceName+"/mode","Suspend");
+    getModeName();
+    // now turn the lights off
+        strip1.clear();
+        strip1.show();
+        strip2.clear();
+        strip2.show();
+        strip3.clear();
+        strip3.show();
+
+return 1;
+}
+
+int restore(String command){
+    // read the value from the eeprom
+    // convert to values
+    // juice the leds
+    juiceLeds(myLED1.stripid,myLED1.red,myLED1.green,myLED1.blue,myLED1.white);
+    juiceLeds(myLED2.stripid,myLED2.red,myLED2.green,myLED2.blue,myLED2.white);
+    juiceLeds(myLED3.stripid,myLED3.red,myLED3.green,myLED3.blue,myLED3.white);
+    // change the mode
+     EEPROM.get(CONFIGADDR, readConfig);
+    readConfig.mode = 1;  // mode 1 store 
+     EEPROM.put(CONFIGADDR, readConfig);
+     getModeName();
+
     return 1;
 }
 

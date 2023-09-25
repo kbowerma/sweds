@@ -39,6 +39,7 @@ D5  |   J11 | PIR      |
 ### Functions
 #### ledConfig:
  ```1:red:100``` _turns on light 1 red at 100_
+ Publishes mystrip, mycolor, myprigness
 #### setConfig:
 key | parms | actions | example
 ----|-------|-------- | --------
@@ -54,10 +55,10 @@ reset | - | reboots
 ### Modes
 Stored operational mode like wether to restore the lights after the motion timer. 
 Currently it doesnt do anything 
-enum|mode|desc
-----|----|---
+enum|mode|desc|example
+----|----|---|---
 0|none
-1|store
+1|store | stores led values | ```setConfig mode/1```
 2|suspend
 3|foo
 4|default
