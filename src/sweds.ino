@@ -9,6 +9,7 @@
 
 #include "sweds.h"
 #include <neopixel.h>
+#include <DeviceNameHelperRK.h>
 
 // Globals
 int led2 = D7;
@@ -22,6 +23,9 @@ int numpixel = 18;
 int motionState;
 int lastMotionTime, secSinceMotion = -1;
 String modeName = "unset";
+String deviceName = "";
+int EEPROM_OFFSET = 100;
+int myHour;
 
 // Objects
 SYSTEM_MODE(AUTOMATIC);
@@ -42,6 +46,9 @@ void setup()
 
     // get Config
     EEPROM.get(CONFIGADDR, readConfig);
+    // You must call this from setup!
+    DeviceNameHelperEEPROM::instance().setup(EEPROM_OFFSET);
+    deviceName = DeviceNameHelperEEPROM::instance().getName();
 
     if (readConfig.initialized == 1)
     {
@@ -75,6 +82,8 @@ void setup()
 
 void loop()
 {
+ // Device name helper
+  DeviceNameHelperEEPROM::instance().loop();
 
   // Motion Loop logic
   if (readConfig.motionEnabled == true )
@@ -95,6 +104,7 @@ void loop()
       digitalWrite(led2, LOW);
     }
 }
+myHour = Time.hour() - 5;
 }
 
 // ---------- Functions ---------
@@ -191,7 +201,7 @@ void storeLedValues(int stripId, int ured, int ugreen, int ublue, int uwhite)
     {
         EEPROM.put(LEDBASEADDR + stripId, LEDS[stripId - 1]);
     }
-
+    // The three normal strips
     if (stripId < 4)
     {
         LEDS[stripId - 1].stripid = stripId;
@@ -276,7 +286,9 @@ void juiceLeds(int stripId, int ured, int ugreen, int ublue, int uwhite)
 void ledhandler(const char *event, const char *data)
 {
     String stdata = String(data);
-    Particle.publish("debug stdata", stdata);
+    //String myName = DeviceNameHelperEEPROM::instance().getName();
+    Particle.publish(deviceName, stdata);
+    //Particle.publish("hour",String(myHour));  // prints the hour
 
     ledConfig(String(stdata));
 }
