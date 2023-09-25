@@ -17,7 +17,7 @@ int red, green, blue, white = 0; // variable to store color
 int strip1pin = D2;
 int strip2pin = D3;
 int strip3pin = D4;
-int PIR = A0;
+int PIR = D5;
 int numpixel = 18;
 int motionState;
 int lastMotionTime, secSinceMotion = -1;
@@ -89,6 +89,11 @@ void loop()
 
     // last item in loop
     secSinceMotion = (millis() - lastMotionTime) / 1000;
+
+    // turn off led if motion is older than 5 seconds ago
+    if ( secSinceMotion > 5 ) {
+      digitalWrite(led2, LOW);
+    }
 }
 }
 
@@ -279,9 +284,9 @@ void ledhandler(const char *event, const char *data)
 void motionHandler()
 {
   // toggle blue led
-    digitalWrite(led2, !digitalRead(led2)); 
+    //digitalWrite(led2, !digitalRead(led2)); 
     // delay(500);
-    // digitalWrite(led2, HIGH);
+    digitalWrite(led2, HIGH);
     lastMotionTime = millis();
     return;
 }
