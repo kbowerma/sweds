@@ -1,6 +1,6 @@
 #define FILENAME "sweds.ino"
-#define MYVERSION "4.18"
-#define BUILD_DATE "9/15/23"
+#define MYVERSION "4.20"
+#define BUILD_DATE "9/25/23"
 #define CONFIGADDR 10
 #define MODEADDR 20
 #define LEDBASEADDR 30

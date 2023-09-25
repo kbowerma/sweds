@@ -13,6 +13,12 @@ A Particle project named sweds for swed1 and swed2 from zbar5
 
 https://www.amazon.com/gp/product/B00FDPO9B8/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1
 
+## Devicename 
+Uses [DeviceNameHelperRK](https://github.com/rickkas7/DeviceNameHelperRK) to store name in EEPROM and load into var ```deviceName``` at runtime
+
+## Global Variables
+ - myHour = current hour (GMT -5) used to determin how to restore the light
+
 ## Adafruit 1/2 Board Pinout
 
 ![](https://docs.particle.io/assets/images/photon-2-pinout.svg)
@@ -24,6 +30,7 @@ GND |   E4  | gnd      | (-) rail (1 right)
 D2  |   J14 | D2       | header
 D3  |   J13 | D3       | header  
 D4  |   J12 | D4       | header
+D5  |   J11 | PIR      | 
 
 ## Methods
 ### Publish 
