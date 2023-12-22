@@ -22,6 +22,7 @@ int PIR = D5;
 int numpixel = 18;
 int motionState;
 int lastMotionTime, secSinceMotion = -1;
+String lastMotionAt = "unset";
 String modeName = "unset";
 String deviceName = "";
 int EEPROM_OFFSET = 100;
@@ -94,8 +95,14 @@ void loop()
     if (motionState == HIGH)
     { // got motion
         motionHandler();
-    }
+    } 
+    else { 
+        if ( readConfig.mode == 1 & secSinceMotion > readConfig.awayHoldTMR ) {
+            // run suspend
+            suspend("Idle");
+        }
 
+    }
     // last item in loop
     secSinceMotion = (millis() - lastMotionTime) / 1000;
 
@@ -103,8 +110,11 @@ void loop()
     if ( secSinceMotion > 5 ) {
       digitalWrite(led2, LOW);
     }
+
+
 }
-myHour = Time.hour() - 5;
+
+
 }
 
 // ---------- Functions ---------
@@ -122,6 +132,7 @@ void setUpParticleVariables()
     Particle.variable("buildDate", BUILD_DATE);
     Particle.variable("myfirmware", MYFIRMWARE);
     Particle.variable("lastMotion", secSinceMotion);
+    Particle.variable("lastMotionAt",lastMotionAt);
     Particle.variable("mode", modeName);
 }
 
@@ -300,6 +311,16 @@ void motionHandler()
   // toggle blue led D7
     digitalWrite(led2, HIGH);
     lastMotionTime = millis();
+
+    //lastMotionAt = String(Time.hour()-5)+":"+String(Time.minute());
+    Time.zone(-5);
+    lastMotionAt = Time.format("%I:%M %p");
+
+
+    // restore
+    if ( readConfig.mode == 2 & readConfig.motionEnabled == true & secSinceMotion < 2 ) {
+        restore("motion detected");
+    }
     return;
 }
 
@@ -389,13 +410,19 @@ int setConfig(String command)
 }
 
 int suspend(String command){
+
+    // default to force if Idle is not passed
+    if ( command != "Idle" ){
+        command = "forced";
+    }
+
     // 1 read config
     EEPROM.get(CONFIGADDR, readConfig);
     // 2 Change mode to suspend
     readConfig.mode = 2;
     EEPROM.put(CONFIGADDR, readConfig);
     // 3 turn off the lights
-    //Particle.publish(deviceName+"/mode","Suspend");
+    Particle.publish(deviceName+"/suspend",command);
     getModeName();
     // now turn the lights off
         strip1.clear();
@@ -446,3 +473,4 @@ void getModeName()
     }
     Particle.publish("mode", modeName);
 }
+s
