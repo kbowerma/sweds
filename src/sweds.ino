@@ -39,7 +39,6 @@ MQTT client(server, 1883, callback);
 
 String broker_user = "homeassistant";
 String broker_pass =  "hi2oog1ohch7ooVeequ2Rohng1as3wohngiangee8aic4pahlaiSeixeux9keeZu";
-String mqttTopic = "particle/swed1";
 
 // recieve message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -76,6 +75,8 @@ void setup()
     // You must call this from setup!
     DeviceNameHelperEEPROM::instance().setup(EEPROM_OFFSET);
     deviceName = DeviceNameHelperEEPROM::instance().getName();
+    String mqttTopic = "particle/"+deviceName;
+
 
     if (readConfig.initialized == 1)
     {
@@ -109,46 +110,50 @@ void setup()
     // -------- MQTT Publish test
     client.connect("sparkclient",broker_user,broker_pass);
     if (client.isConnected()) {
-        client.publish("particle/swed1","Device boot");
+        client.publish(mqttTopic,"Device boot");
     }
 }
 
 
 void loop()
 {
- // Device name helper
-  DeviceNameHelperEEPROM::instance().loop();
+    if (client.isConnected())
+        client.loop();
 
-  // Motion Loop logic
-  if (readConfig.motionEnabled == true )
-  {
-    motionState = digitalRead(PIR);
+    // Device name helper
+    DeviceNameHelperEEPROM::instance().loop();
 
-    // Got motion
-    if (motionState == HIGH)
-    { // got motion
-        motionHandler();
-    } 
-    else { 
-        if (( readConfig.mode == 1) && (secSinceMotion > readConfig.awayHoldTMR)) {
-            // run suspend
-            suspend("Idle");
+    // Motion Loop logic
+    if (readConfig.motionEnabled == true )
+    {
+        motionState = digitalRead(PIR);
+
+        // Got motion
+        if (motionState == HIGH)
+        {
+            // got motion
+            motionHandler();
+        }
+        else
+        {
+            if (( readConfig.mode == 1) && (secSinceMotion > readConfig.awayHoldTMR))
+            {
+                // run suspend
+                suspend("Idle");
+            }
         }
 
+        // last item in loop
+        secSinceMotion = (millis() - lastMotionTime) / 1000;
+
+        // turn off led if motion is older than 5 seconds ago
+        if ( secSinceMotion > 5 )
+        {
+            digitalWrite(led2, LOW);
+        }
     }
-    // last item in loop
-    secSinceMotion = (millis() - lastMotionTime) / 1000;
-
-    // turn off led if motion is older than 5 seconds ago
-    if ( secSinceMotion > 5 ) {
-      digitalWrite(led2, LOW);
-    }
-
-
-    }
-
-
 }
+
 
 // ---------- Functions ---------
 
@@ -202,7 +207,7 @@ int ledConfig(String command)
     // Particle.publish("mybrightness", String(mybrightness));
     Particle.publish(myMsg,command);
     // ------ mqtt test here ---------
-    mpub(myMsg);
+    client.publish("particle/"+deviceName, command);
     // ------ mqtt test here ---------
 
 
@@ -510,22 +515,4 @@ void getModeName()
         modeName = "default";
     }
     Particle.publish("mode", modeName);
-}
-
-void mpub(const char* message) {
-    if (!client.isConnected()) {
-        // Connect to the MQTT broker
-        if (client.connect("sparkclient", broker_user, broker_pass)) {
-            // Connected, publish the message
-            client.publish(mqttTopic, message);
-            //mqttClient.disconnect();  // Disconnect after publishing (Optional)
-        } else {
-            // Connection failed
-            // Handle the failure or log the error
-        }
-    } else {
-        // Already connected, publish the message
-        client.publish(mqttTopic, message);
-        //mqttClient.disconnect();  // Disconnect after publishing (Optional)
-    }
 }
