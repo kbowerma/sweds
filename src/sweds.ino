@@ -97,7 +97,7 @@ void loop()
         motionHandler();
     } 
     else { 
-        if ( readConfig.mode == 1 & secSinceMotion > readConfig.awayHoldTMR ) {
+        if (( readConfig.mode == 1) && (secSinceMotion > readConfig.awayHoldTMR)) {
             // run suspend
             suspend("Idle");
         }
@@ -318,7 +318,7 @@ void motionHandler()
 
 
     // restore
-    if ( readConfig.mode == 2 & readConfig.motionEnabled == true & secSinceMotion < 2 ) {
+    if (( readConfig.mode == 2)  && (readConfig.motionEnabled == true) && (secSinceMotion < 2 )) {
         restore("motion detected");
     }
     return;
@@ -473,4 +473,3 @@ void getModeName()
     }
     Particle.publish("mode", modeName);
 }
-s
