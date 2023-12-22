@@ -10,6 +10,7 @@
 #include "sweds.h"
 #include <neopixel.h>
 #include <DeviceNameHelperRK.h>
+#include <MQTT.h>
 
 // Globals
 int led2 = D7;
@@ -27,6 +28,34 @@ String modeName = "unset";
 String deviceName = "";
 int EEPROM_OFFSET = 100;
 int myHour;
+
+
+
+const uint8_t server[] = { 192,168,1,190 };  //the IP of broker
+void callback(char* topic, byte* payload, unsigned int length);
+MQTT client(server, 1883, callback);
+String broker_user = "homeassistant";
+String broker_pass =  "hi2oog1ohch7ooVeequ2Rohng1as3wohngiangee8aic4pahlaiSeixeux9keeZu";
+//String mqttTopic = "particle/swed1";
+
+// recieve message
+// void callback(char* topic, byte* payload, unsigned int length) {
+// char p[length + 1];
+// memcpy(p, payload, length);
+// p[length] = NULL;
+
+// if (!strcmp(p, "RED"))
+// RGB.color(255, 0, 0);
+// else if (!strcmp(p, "GREEN"))
+// RGB.color(0, 255, 0);
+// else if (!strcmp(p, "BLUE"))
+// RGB.color(0, 0, 255);
+// else
+// RGB.color(255, 255, 255);
+// delay(1000);
+// }
+
+
 
 // Objects
 SYSTEM_MODE(AUTOMATIC);
@@ -79,7 +108,14 @@ void setup()
     strip3.begin();
     strip3.show(); // Initialize all pixels to 'off'
                    // Publish my vars
+
+    // -------- MQTT Publish test
+    client.connect("sparkclient",broker_user,broker_pass);
+    if (client.isConnected()) {
+        client.publish("particle/swed1","Device boot");
+    }
 }
+
 
 void loop()
 {
@@ -168,6 +204,10 @@ int ledConfig(String command)
     // Particle.publish("mycolor", String(mycolor));
     // Particle.publish("mybrightness", String(mybrightness));
     Particle.publish(myMsg,command);
+    // ------ mqtt test here ---------
+    //client.publish("outTopic/message","hello world");
+    // ------ mqtt test here ---------
+
 
     if (mycolor == "red")
     {
@@ -304,6 +344,7 @@ void ledhandler(const char *event, const char *data)
     //Particle.publish("hour",String(myHour));  // prints the hour
 
     ledConfig(String(stdata));
+    // publishMessage(String(stdata));
 }
 
 void motionHandler()
@@ -473,3 +514,21 @@ void getModeName()
     }
     Particle.publish("mode", modeName);
 }
+
+// void publishMessage(const char* message) {
+//     if (!client.isConnected()) {
+//         // Connect to the MQTT broker
+//         if (client.connect("sparkclient", broker_user, broker_pass)) {
+//             // Connected, publish the message
+//             client.publish(mqttTopic, message);
+//             //mqttClient.disconnect();  // Disconnect after publishing (Optional)
+//         } else {
+//             // Connection failed
+//             // Handle the failure or log the error
+//         }
+//     } else {
+//         // Already connected, publish the message
+//         client.publish(mqttTopic, message);
+//         //mqttClient.disconnect();  // Disconnect after publishing (Optional)
+//     }
+// }
