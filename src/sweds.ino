@@ -206,8 +206,9 @@ int ledConfig(String command)
     // Particle.publish("mycolor", String(mycolor));
     // Particle.publish("mybrightness", String(mybrightness));
     Particle.publish(myMsg,command);
+    String pubMsg = "{action: ledConfig, command: "+command+", time: "+Time.format("%H:%M")  + "}";
     // ------ mqtt test here ---------
-    client.publish("particle/"+deviceName, command);
+    client.publish("particle/"+deviceName, pubMsg);
     // ------ mqtt test here ---------
 
 
@@ -466,6 +467,7 @@ int suspend(String command){
     EEPROM.put(CONFIGADDR, readConfig);
     // 3 turn off the lights
     Particle.publish(deviceName+"/suspend",command);
+     client.publish("particle/"+deviceName+"suspend", command);
     getModeName();
     // now turn the lights off
         strip1.clear();
