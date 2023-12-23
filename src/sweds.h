@@ -1,5 +1,5 @@
 #define FILENAME "sweds.ino"
-#define MYVERSION "4.51_demeter"
+#define MYVERSION "4.52_demeter"
 #define BUILD_DATE "12/22/23"
 #define CONFIGADDR 10
 #define MODEADDR 20
